@@ -16,6 +16,7 @@ import org.junit.runner.RunWith
 
 const val SETTINGS_PACKAGE = "com.android.settings"
 const val MODEL_PACKAGE = "ru.netology.testing.uiautomator"
+const val KEY_EXTRA_MESSAGE = "testing_message"
 
 const val TIMEOUT = 5000L
 
@@ -24,6 +25,8 @@ class ChangeTextTest {
 
     private lateinit var device: UiDevice
     private val textToSet = "Netology"
+    private val str = ""
+    private val firstText = "Hello UiAutomator!"
 
 //    @Test
 //    fun testInternetSettings() {
@@ -109,7 +112,29 @@ class ChangeTextTest {
         val result = device.findObject(By.res(packageName, "textToBeChanged")).text
         assertEquals(result, textToSet)
     }
+    @Test
+    fun testNoChangeText() {
+        val packageName = MODEL_PACKAGE
+        waitForPackage(packageName)
 
+        device.findObject(By.res(packageName, "userInput")).text = str
+        device.findObject(By.res(packageName, "buttonChange")).click()
+
+        val result = device.findObject(By.res(packageName, "textToBeChanged")).text
+        assertEquals(result, firstText)
+    }
+    @Test
+    fun testChangeTextOnNewActivity() {
+        waitForPackage(MODEL_PACKAGE)
+
+        device.findObject(By.res(MODEL_PACKAGE, "userInput")).text = textToSet
+        device.findObject(By.res(MODEL_PACKAGE, "buttonActivity")).click()
+
+        device.wait(Until.hasObject(By.pkg(KEY_EXTRA_MESSAGE)), TIMEOUT)
+
+        val result = device.findObject(By.res(KEY_EXTRA_MESSAGE, "text")).text
+        assertEquals(result, textToSet)
+    }
 }
 
 
